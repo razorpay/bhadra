@@ -1,0 +1,112 @@
+---
+version: '3.7'
+services:
+  nginx:
+    build:
+      context: ./
+      dockerfile: Dockerfile.nginx
+    image: bhadra-nginx:${NGINX_VERSION:-latest}
+    depends_on:
+      - uwsgi
+    environment:
+      NGINX_METRICS_ENABLED: ${NGINX_METRICS_ENABLED:-false}
+    ports:
+      - target: 8080
+        published: ${DD_PORT:-8080}
+        protocol: tcp
+        mode: host
+      - target: 8443
+        published: ${DD_TLS_PORT:-8443}
+        protocol: tcp
+        mode: host
+  uwsgi:
+    build:
+      context: ./
+      dockerfile: Dockerfile.django
+    image: bhadra-django:${DJANGO_VERSION:-latest}
+    depends_on:
+      - postgresql
+    entrypoint: ['/wait-for-it.sh', 'bhadra-postgresql-1:5432', '-t', '30', '--', '/entrypoint-uwsgi.sh']
+    environment:
+      DD_DEBUG: 'True'
+      DD_SOCIAL_AUTH_SHOW_LOGIN_FORM: 'True'
+      DD_SOCIAL_LOGIN_AUTO_REDIRECT: 'False'
+      DD_DJANGO_METRICS_ENABLED: 'False'
+      DD_ALLOWED_HOSTS: '*'
+      # nosemgrep
+      DD_DATABASE_URL: ${DD_DATABASE_URL:-postgresql://bhadra:bhadra@bhadra-postgresql-1:5432/bhadra}
+      DD_CELERY_BROKER_USER: ${DD_CELERY_BROKER_USER:-guest}
+      DD_CELERY_BROKER_PASSWORD: ${DD_CELERY_BROKER_USER:-guest}
+      DD_SECRET_KEY: ${DD_SECRET_KEY:-hhZCp@D28z!n@NED*yB!ROMt+WzsY*iq}
+      DD_CREDENTIAL_AES_256_KEY: ${DD_CREDENTIAL_AES_256_KEY:-bhadratest}
+    volumes:
+        - type: bind
+          source: ./docker/extra_settings
+          target: /app/docker/extra_settings
+  celerybeat:
+    image: bhadra-django:latest
+    depends_on:
+      - postgresql
+      - rabbitmq
+    entrypoint: ['/wait-for-it.sh', 'bhadra-postgresql-1:5432', '-t', '30', '--', '/entrypoint-celery-beat.sh']
+    environment:
+      DD_CELERY_BROKER_USER: ${DD_CELERY_BROKER_USER:-guest}
+      DD_CELERY_BROKER_PASSWORD: ${DD_CELERY_BROKER_USER:-guest}
+      DD_DATABASE_PASSWORD: "bhadra"
+      # nosemgrep
+      DD_DATABASE_URL: ${DD_DATABASE_URL:-postgresql://bhadra:bhadra@bhadra-postgresql-1:5432/bhadra}
+      DD_SECRET_KEY: ${DD_SECRET_KEY:-hhZCp@D28z!n@NED*yB!ROMt+WzsY*iq}
+      DD_CREDENTIAL_AES_256_KEY: ${DD_CREDENTIAL_AES_256_KEY:-bhadratest}
+    volumes:
+        - type: bind
+          source: ./docker/extra_settings
+          target: /app/docker/extra_settings
+  celeryworker:
+    image: bhadra-django:latest
+    depends_on:
+      - postgresql
+      - rabbitmq
+    entrypoint: ['/wait-for-it.sh', 'bhadra-postgresql-1:5432', '-t', '30', '--', '/entrypoint-celery-worker.sh']
+    environment:
+      DD_CELERY_BROKER_USER: ${DD_CELERY_BROKER_USER:-guest}
+      DD_CELERY_BROKER_PASSWORD: ${DD_CELERY_BROKER_USER:-guest}
+      DD_DATABASE_PASSWORD: "bhadra"
+      # nosemgrep
+      DD_DATABASE_URL: ${DD_DATABASE_URL:-postgresql://bhadra:bhadra@bhadra-postgresql-1:5432/bhadra}
+      DD_SECRET_KEY: ${DD_SECRET_KEY:-hhZCp@D28z!n@NED*yB!ROMt+WzsY*iq}
+      DD_CREDENTIAL_AES_256_KEY: ${DD_CREDENTIAL_AES_256_KEY:-bhadratest}
+    volumes:
+        - type: bind
+          source: ./docker/extra_settings
+          target: /app/docker/extra_settings
+  initializer:
+    image: bhadra-django:latest
+    depends_on:
+      - postgresql
+    entrypoint: ['/wait-for-it.sh', 'bhadra-postgresql-1:5432', '--', '/entrypoint-initializer.sh']
+    environment:
+      # nosemgrep
+      DD_DATABASE_URL: ${DD_DATABASE_URL:-postgresql://bhadra:bhadra@bhadra-postgresql-1:5432/bhadra}
+      DD_ADMIN_USER: ${DD_ADMIN_USER:-admin}
+      DD_ADMIN_MAIL: ${DD_ADMIN_USER:-admin@bhadra.local}
+      DD_ADMIN_FIRST_NAME: ${DD_ADMIN_FIRST_NAME:-Admin}
+      DD_ADMIN_LAST_NAME: ${DD_ADMIN_LAST_NAME:-User}
+      DD_INITIALIZE: 'True'
+      DD_SECRET_KEY: ${DD_SECRET_KEY:-hhZCp@D28z!n@NED*yB!ROMt+WzsY*iq}
+      DD_CREDENTIAL_AES_256_KEY: ${DD_CREDENTIAL_AES_256_KEY:-bhadratest}
+    volumes:
+        - type: bind
+          source: ./docker/extra_settings
+          target: /app/docker/extra_settings
+  postgresql:
+    image: postgres:14.5-alpine@sha256:322e9d80bbe0d19df45a2cfa262b50947683b4da283afdb6bee8e549aea87bf3
+    environment:
+      POSTGRES_DB: "bhadra"
+      POSTGRES_USER: "bhadra"
+      POSTGRES_PASSWORD: "bhadra"
+    volumes:
+      - bhadra_postgres:/var/lib/postgresql/data
+  rabbitmq:
+    image: rabbitmq:3.8.12
+volumes:
+  bhadra_postgres: {}

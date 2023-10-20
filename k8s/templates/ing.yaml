@@ -1,0 +1,24 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    meta.helm.sh/release-name: bhadra
+    meta.helm.sh/release-namespace: {{.Values.namespace}}
+  generation: 1
+  labels:
+    app.kubernetes.io/instance: bhadra
+    app.kubernetes.io/managed-by: spinnaker
+    app.kubernetes.io/name: bhadra
+    bhadra.org/component: django
+    helm.sh/chart: bhadra-1.4.3
+  name: bhadra
+  namespace: {{.Values.namespace}}
+spec:
+  rules:
+  - host: {{.Values.host}}
+    http:
+      paths:
+      - backend:
+          serviceName: bhadra-django
+          servicePort: http
+        path: /
