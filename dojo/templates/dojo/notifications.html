@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% load static %}
+{% load event_tags %}
+
+
+{% block content %}
+    {{ block.super }}
+    <h3> {% if scope == 'system' %}System{% else %}Personal{% endif %} Notification Settings </h3>
+    <form class="form-inline col-sm-10" method="post" id="notform">{% csrf_token %}
+        <div class="container" style="width:50%">
+            {% if request.user.is_superuser %}
+               <div class="col-sm-5">
+                   <label for="notification-scope">Scope <span class="fa fa-question-circle has-popover" data-trigger="hover" data-content="Destinations for system notifications are configured in System Settings. Destinations for personal notifications are taken from your personal contact details (personal Slack notifications will be sent to you as a direct message)."/></label>
+                    <select data-placeholder="Scope" id="notification-scope" class="chosen-select form-control"/>
+                        <option value="system">System</option>
+                         <option value="personal">Personal</option>
+                     </select>
+                </div>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+                <p>&nbsp;</p>
+            {% endif %}
+            {% if scope == 'system' %}
+                <p class="amber-color-with-padding">These notification settings apply <u>globally</u> to all products and will be sent to all super / staff users.</p>
+            {% else %}
+                <p class="amber-color-with-padding">These notification settings apply <u>globally</u> to all products that you have read access to and will be sent to you only.</p>
+                <p> If you want only notifications for certain products you should disable everything here and enable notifications on those products.</p>
+            {% endif %}
+            {% for u in not_users %}
+                <p>{{ u.username }} {{ u.applicable_notifications_count }}</p>
+                {% for n in u.applicable_notifications %}
+                    <p>{{ n.id }} {{ n.product.id }}, {{ n.user }}, e:{{ n.engagement_added}}, t:{{ n.test_added}}, scan:{{ n.scan_added }} </p>
+                {% endfor %}
+                <p>{{ u.merged_notifications.scan_added }}</p>
+            {% endfor %}
+            <table class="table table-hover col-sm-5">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th class="centered">Slack</th>
+                        {% if scope == 'system' %}
+                        <th class="centered">Microsoft Teams</th>
+                        {% endif %}
+                        <th class="centered">Mail</th>
+                        <th class="centered">Alert</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for field in form.visible_fields %}
+                    {% if field.auto_id %}
+                        <tr>
+                            <td>{{ field.label }}{% if field.field.required %}<sup>*</sup>{% endif %}
+                                {% if field.help_text %}
+                                <i class="fa fa-question-circle has-popover" data-trigger="hover" data-content="{{ field.help_text }}" data-placement="right" data-container="body">
+                                </i>
+                            {% endif %}
+                            </td>
+                    {% endif %}
+                    {% for pk,c in field.field.widget.choices %}
+                    {% if scope == 'system' or scope == 'personal' and c != "msteams" %}
+                        <td class="centered">
+                            <input type="checkbox" name="{{ field.name }}" {% if c in field.value %}checked{% endif %} value="{{ c }}"/>
+                        </td>
+                    {% endif %}
+                    {% endfor %}
+                    </tr>
+                    {% for error in field.errors %}
+                        <span class="help-block {{ form.error_css_class }}">{{ error }}</span>
+                    {% endfor %}
+                {% endfor %}
+            </table>
+            <div class="col-sm-offset-10">
+                <input class="btn btn-primary" type="submit" name="edit_notifications" value="Submit"/>
+            </div>
+            </div>
+    </form>
+{% endblock %}
+{% block postscript %}
+    {{ block.super }}
+    <script>
+        $(function () {
+            $(".chosen-select").chosen({disable_search_threshold: 10});
+            $('#notification-scope').val('{{ scope }}');
+            $('.chosen-select').trigger('chosen:updated');
+            $('#notification-scope').change(function() { window.location = '/notifications/' + $(this).val(); });
+        });
+    </script>
+{% endblock %}

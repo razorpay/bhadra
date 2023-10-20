@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% load display_tags %}
+{% load static %}
+
+{% block content %}
+    {{ block.super }}
+    <h3> {{ name }} {% if to_edit %}- {{ to_edit.username }}{% endif %}</h3>
+    <form class="form-horizontal" method="post">{% csrf_token %}
+        <fieldset>
+            <legend>Default Information</legend>
+            {% include "dojo/form_fields.html" with form=form %}
+        </fieldset>
+        <fieldset>
+            <legend>Additional Contact Information</legend>
+            {% include "dojo/form_fields.html" with form=contact_form %}
+        </fieldset>
+        {% if 'FEATURE_AUTHORIZATION_V2'|setting_enabled %}
+        <fieldset>
+            <legend>Global Role</legend>
+            {% include "dojo/form_fields.html" with form=global_role_form %}
+        </fieldset>
+        {% endif %}
+        <div class="form-group">
+            <div class="col-sm-offset-2 col-sm-10">
+                <input class="btn btn-primary" type="submit" name="add_user" value="Submit"/>
+            </div>
+        </div>
+    </form>
+{% endblock %}
+{% block postscript %}
+    {{ block.super }}
+    {% if to_add or to_edit and not to_edit.is_staff %}
+        <script type="application/javascript">
+            $(function () {
+                $('#id_authorized_products').chosen({'placeholder_text_multiple': 'Select some products...'});
+                $('#id_authorized_product_types').chosen({'placeholder_text_multiple': 'Select some Business Units...'});
+            });
+        </script>
+    {% else %}
+        <script type="application/javascript">
+            $(function () {
+                $('#id_authorized_products').parents(".form-group").remove();
+                $('#id_authorized_product_types').parents(".form-group").remove();
+            });
+        </script>
+    {% endif %}
+    {% if not user.is_superuser %}
+        <script type="application/javascript">
+            $(function () {
+                $('#id_is_superuser').parents(".form-group").remove();
+            });
+        </script>
+    {% endif %}
+{% endblock %}

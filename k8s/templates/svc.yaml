@@ -1,0 +1,53 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: bhadra
+    meta.helm.sh/release-namespace: {{.Values.namespace}}
+  labels:
+    app.kubernetes.io/instance: bhadra
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: bhadra
+    bhadra.org/component: django
+    helm.sh/chart: bhadra-1.4.3
+  name: bhadra-django
+  namespace: {{.Values.namespace}}
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 8080
+  selector:
+    app.kubernetes.io/instance: bhadra
+    app.kubernetes.io/name: bhadra
+    bhadra.org/component: django
+  sessionAffinity: None
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    meta.helm.sh/release-name: bhadra
+    meta.helm.sh/release-namespace: {{.Values.namespace}}
+  labels:
+    app.kubernetes.io/instance: bhadra
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: postgresql
+    helm.sh/chart: postgresql-9.8.11
+  name: bhadra-postgresql
+  namespace: {{.Values.namespace}}
+spec:
+  ports:
+  - name: tcp-postgresql
+    port: 5432
+    protocol: TCP
+    targetPort: tcp-postgresql
+  selector:
+    app.kubernetes.io/instance: bhadra
+    app.kubernetes.io/name: postgresql
+    role: master
+  sessionAffinity: None
+  type: ClusterIP
+

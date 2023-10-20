@@ -1,0 +1,45 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  annotations:
+    meta.helm.sh/release-name: bhadra
+    meta.helm.sh/release-namespace: {{.Values.namespace}}
+  labels:
+    app.kubernetes.io/instance: bhadra
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: bhadra
+    helm.sh/chart: bhadra-1.4.3
+  name: bhadra
+  namespace: {{.Values.namespace}}
+data:
+  DD_ADMIN_FIRST_NAME: Admin
+  DD_SITE_URL: {{ .Values.host }}
+  DD_ADMIN_LAST_NAME: User
+  DD_ADMIN_MAIL: admin@bhadra.local
+  DD_ADMIN_USER: admin
+  DD_ALLOWED_HOSTS: '*'
+  DD_CELERY_BROKER_URL: <VALUE> REDIS ENDPOINT
+  #DD_CELERY_BROKER_HOST: 
+  # DD_CELERY_BROKER_PARAMS: ""
+  #DD_CELERY_BROKER_PORT: "6379"
+  DD_CELERY_BROKER_SCHEME: redis
+  #DD_CELERY_BROKER_USER: ""
+  DD_CELERY_LOG_LEVEL: INFO
+  DD_CELERY_WORKER_AUTOSCALE_MAX: "8"
+  DD_CELERY_WORKER_AUTOSCALE_MIN: "2"
+  DD_CELERY_WORKER_CONCURRENCY: "8"
+  DD_CELERY_WORKER_POOL_TYPE: prefork
+  DD_CELERY_WORKER_PREFETCH_MULTIPLIER: "128"
+  DD_DATABASE_ENGINE: django.db.backends.postgresql
+  DD_DATABASE_HOST: <VALUE> POSTSGRES ENDPOINT
+  DD_DATABASE_PORT: "5432"
+  DD_DATABASE_USER: bhadra
+  DD_DJANGO_METRICS_ENABLED: "false"
+  DD_INITIALIZE: "true"
+  DD_UWSGI_ENDPOINT: /run/bhadra/uwsgi.sock
+  DD_UWSGI_HOST: localhost
+  DD_UWSGI_NUM_OF_PROCESSES: "2"
+  DD_UWSGI_NUM_OF_THREADS: "2"
+  DD_UWSGI_PASS: unix:///run/bhadra/uwsgi.sock
+  METRICS_HTTP_AUTH_USER: monitoring
+  NGINX_METRICS_ENABLED: "false"
