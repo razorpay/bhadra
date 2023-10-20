@@ -56,7 +56,8 @@ Bhadra/Defectdojo can be accessed through a Swagger REST API. Please see [the AP
 
 - Kept the UI very simple by showing needed information to security folks and developer.
 - Designed for Appsec folks to give holistic view about different tools results in one place for a specific product
-- Bhadra Flow  <img width="1210" alt="bhadra-flow" src="https://github.com/razorpay/bhadra/assets/98045500/dc1efe54-35ef-4a9e-902b-0709adb10aec">
+- Bhadra Flow  <img width="1391" alt="bhadra-dataflow" src="https://github.com/razorpay/bhadra/assets/98045500/c04849dd-3fb4-4173-aec4-fe46c6e64650">
+
   Products are considered as github repo, Engagements are considered as tools (semgrep, dependabot,..), daily scans will create a Tests.
 
 ## What changes from Defect-Dojo
