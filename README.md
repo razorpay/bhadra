@@ -1,8 +1,6 @@
 # Bhadra
 
-Bhadra is a vulnerability management tool, opinionated version of Defect-Dojo. 
-
-Bhadra allows you to manage your application security, maintaining various products, helps to triage vulnerabilities and push findings to defect trackers. It is very good tool for DevSecops and vulnerability management. 
+Bhadra is a vulnerability management tool. It allows you to manage your application security, maintaining various products, helps to triage vulnerabilities and push findings to defect trackers.
 
 But in Razorpay, we are not able to use this as ready-made solution, built some things around it to tackle 
   - how our deployment can be aligned with production
