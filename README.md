@@ -1,10 +1,8 @@
 # Bhadra
 
-Bhadra is a vulnerability management tool, opinionated version of Defect-Dojo. 
+Bhadra is a vulnerability management tool. It allows you to manage your application security, maintaining various products, helps to triage vulnerabilities and push findings to defect trackers.
 
-[DefectDojo](https://www.defectdojo.org/) allows you to manage your application security, maintaining various products, helps to triage vulnerabilities and push findings to defect trackers. Defect-Dojo is very good tool for DevSecops and vulnerability management. 
-
-But in Razorpay, we are not able to use this as ready-made solution, built some things around it to tackle 
+It is designed to improve the security posture within Razorpay and effectively helps program management on below areas
   - how our deployment can be aligned with production
   - how SAST, SCA, container scanning can be aligned with deployment
   - how repo level mapping helps to track the findings and 
@@ -24,43 +22,19 @@ docker-compose up
 docker-compose logs initializer | grep "Admin password:"
 ```
 
-Navigate to <http://localhost:8080>.
-
-<!-- Alternatively, try out the demo sever at [demo.defectdojo.org](https://demo.defectdojo.org)
-
-Log in with `admin / defectdojo@demo#appsec` and please note that the demo server is refreshed regularly. -->
-
-<!-- ## Documentation
-
-For detailed documentation you can visit
-[Github Pages](https://defectdojo.github.io/django-DefectDojo/). -->
-
-## Supported Installation Options
-
-* [Docker / Docker Compose](DOCKER.md)
-<!-- * [godojo](https://github.com/DefectDojo/godojo) -->
-
-<!-- ** Now EOL'ed **
-* [Setup.bash](https://github.com/DefectDojo/django-DefectDojo/blob/master/setup/README.md) -->
-
 ## Adding new tools/parser
 To add new tools refer this [parser](dojo/tools)
 
 ## Reflecting tool results on frontend
 To reflect the tools on frontend - Add the tool name to this variable "VISIBLE_TOOLS_NAME" on this [Settings](dojo/settings/settings.dist.py) file 
-## REST APIs
 
-Bhadra/Defectdojo can be accessed through a Swagger REST API. Please see [the API documentation](https://defectdojo.github.io/django-DefectDojo/integrations/api-v2-docs/) or the in-app Swagger documentation.
-
-## Light Weight Defect Dojo
+## Simple and easy
 
 - Kept the UI very simple by showing needed information to security folks and developer.
 - Designed for Appsec folks to give holistic view about different tools results in one place for a specific product
 - Bhadra Flow  <img width="1391" alt="bhadra-dataflow" src="https://github.com/razorpay/bhadra/assets/98045500/c04849dd-3fb4-4173-aec4-fe46c6e64650">
 
   Products are considered as github repo, Engagements are considered as tools (semgrep, dependabot,..), daily scans will create a Tests.
-
-## What changes from Defect-Dojo
 
 - Goal is to keep things as simple about the finding and it should be developer friendly. Target audience of the tools is not 
 limited to Security folks. And we changed the UI/UX to keep it simple and neat.
