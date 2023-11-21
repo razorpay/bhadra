@@ -2,7 +2,7 @@
 
 Bhadra is a vulnerability management tool. It allows you to manage your application security, maintaining various products, helps to triage vulnerabilities and push findings to defect trackers.
 
-But in Razorpay, we are not able to use this as ready-made solution, built some things around it to tackle 
+It is designed to improve the security posture within Razorpay and effectively helps program management on below areas
   - how our deployment can be aligned with production
   - how SAST, SCA, container scanning can be aligned with deployment
   - how repo level mapping helps to track the findings and 
