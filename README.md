@@ -32,7 +32,8 @@ To reflect the tools on frontend - Add the tool name to this variable "VISIBLE_T
 
 - Kept the UI very simple by showing needed information to security folks and developer.
 - Designed for Appsec folks to give holistic view about different tools results in one place for a specific product
-- Bhadra Flow  <img width="1391" alt="bhadra-dataflow" src="https://github.com/razorpay/bhadra/assets/98045500/c04849dd-3fb4-4173-aec4-fe46c6e64650">
+- Bhadra Flow
+  <img width="1210" alt="bhadra-flow" src="https://github.com/razorpay/bhadra/assets/98045500/372a35fb-96b6-4252-a57b-3ce29ee820df">
 
   Products are considered as github repo, Engagements are considered as tools (semgrep, dependabot,..), daily scans will create a Tests.
 
